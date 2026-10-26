@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<style>
+    .note {
+    width: 60px;
+    height: 200px;
+    z-index: 1;
+    left: 18px;
+    position: relative;
+    background-color: rgb(247, 243, 237);
+    }
+    .sharp {
+    background-color: rgb(39, 38, 38);
+    position: absolute;
+    width: 36px;
+    height: 120px;
+    z-index: 2;
+    }
+    #octave {
+        position: relative;
+        top: 50px;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        resize:none;
+    }
+</style>
+<head>
+    
+</head>
+<body>
+<button id="C" class="note"></button>
+<button id="C#" class="sharp"></button>
+<button id="D" class="note"></button>
+<button id="D#" class="sharp"></button>
+<button id="E" class="note"></button>
+<button id="F" class="note"></button>
+<button id="F#" class="sharp"></button>
+<button id="G" class="note"></button>
+<button id="G#" class="sharp"></button>
+<button id="A" class="note"></button>
+<button id="A#" class="sharp"></button>
+<button id="B" class="note"></button>
+<textarea id="octave">4</textarea>
+</body>
+<script>
+    const notes = Array.from(document.getElementsByClassName("note"))
+    const sharps = Array.from(document.getElementsByClassName("sharp"))
+    const ctx = new AudioContext();
+    let activenotes = {};
+    let octave = 4
+    const frequencies = {
+        "C": 16.35,
+        "C#": 17.32,
+        "D": 18.35,
+        "D#": 19.45,
+        "E": 20.60,
+        "F": 21.83,
+        "F#": 23.12,
+        "G": 24.50 ,
+        "G#": 25.96 ,
+        "A": 27.50,
+        "A#": 29.14,
+        "B": 30.87
+    };
+notes.forEach(function(button) {
+    button.addEventListener("mousedown", function(){
+        octave = document.getElementById("octave").value
+        const osc = ctx.createOscillator();
+        osc.frequency.value = frequencies[this.id] * (2 ** octave);
+        osc.connect(ctx.destination);
+        activenotes[this.id] = osc;
+        osc.start();
+    });
+    button.addEventListener("mouseup", function(){
+        if (activenote) {
+        activenote.stop();
+        activenote = null
+        }
+    });
+});
+sharps.forEach(function(button) {
+    button.addEventListener("mousedown", function(){
+        octave = document.getElementById("octave").value
+        const osc = ctx.createOscillator();
+        osc.frequency.value = frequencies[this.id] * (2 ** octave);;
+        osc.connect(ctx.destination);
+        activenotes[this.id] = osc;
+        osc.start();
+    });
+    button.addEventListener("mouseup", function(){
+        if (activenote) {
+        activenote.stop();
+        activenote = null
+        }
+    });
+});
+</script>
