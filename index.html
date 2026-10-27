@@ -19,15 +19,22 @@
         position: relative;
         top: 50px;
         width: 20px;
-        height: 20px;
+        height: 15px;
+        left: 10px;
         text-align: center;
         resize:none;
+    }
+    h3 {
+        position: relative;
+        top: 50px;
     }
 </style>
 <head>
     
 </head>
 <body>
+<h1>Piano!</h1>
+<p>pretty self explanitory, click or drag keys to play the piano and change octave at bottom</p>
 <button id="C" class="note"></button>
 <button id="C#" class="sharp"></button>
 <button id="D" class="note"></button>
@@ -40,7 +47,10 @@
 <button id="A" class="note"></button>
 <button id="A#" class="sharp"></button>
 <button id="B" class="note"></button>
+<div style="display: flex; align-items: center;"> 
+<h3>Octave:</h1>
 <textarea id="octave">4</textarea>
+</div>
 </body>
 <script>
     const notes = Array.from(document.getElementsByClassName("note"))
@@ -63,22 +73,16 @@
         "B": 30.87
     };
 notes.forEach(function(button) {
-    button.addEventListener("mousedown", function(){
+    button.addEventListener("mouseenter", function(){
+        if (event.buttons === 1) {
         octave = document.getElementById("octave").value
         const osc = ctx.createOscillator();
         osc.frequency.value = frequencies[this.id] * (2 ** octave);
         osc.connect(ctx.destination);
         activenotes[this.id] = osc;
         osc.start();
-    });
-    button.addEventListener("mouseup", function(){
-        if (activenote) {
-        activenote.stop();
-        activenote = null
         }
     });
-});
-sharps.forEach(function(button) {
     button.addEventListener("mousedown", function(){
         octave = document.getElementById("octave").value
         const osc = ctx.createOscillator();
@@ -87,11 +91,53 @@ sharps.forEach(function(button) {
         activenotes[this.id] = osc;
         osc.start();
     });
-    button.addEventListener("mouseup", function(){
-        if (activenote) {
-        activenote.stop();
-        activenote = null
+    button.addEventListener("mouseleave", function(){
+    if (activenotes[this.id]) {
+        activenotes[this.id].stop();
+       delete activenotes[this.id];
+    }
+
+    });
+        button.addEventListener("mouseup", function(){
+    if (activenotes[this.id]) {
+        activenotes[this.id].stop();
+       delete activenotes[this.id];
+    }
+
+    });
+});
+sharps.forEach(function(button) {
+        button.addEventListener("mouseenter", function(){
+        if (event.buttons === 1) {
+        octave = document.getElementById("octave").value
+        const osc = ctx.createOscillator();
+        osc.frequency.value = frequencies[this.id] * (2 ** octave);
+        osc.connect(ctx.destination);
+        activenotes[this.id] = osc;
+        osc.start();
         }
+    });
+    button.addEventListener("mousedown", function(){
+        octave = document.getElementById("octave").value
+        const osc = ctx.createOscillator();
+        osc.frequency.value = frequencies[this.id] * (2 ** octave);;
+        osc.connect(ctx.destination);
+        activenotes[this.id] = osc;
+        osc.start();
+    });
+            button.addEventListener("mouseup", function(){
+    if (activenotes[this.id]) {
+        activenotes[this.id].stop();
+       delete activenotes[this.id];
+    }
+
+    })
+    button.addEventListener("mouseleave", function(){
+if (activenotes[this.id]) {
+    activenotes[this.id].stop();
+    delete activenotes[this.id];
+}
+
     });
 });
 </script>
